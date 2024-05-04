@@ -12,11 +12,45 @@ import {
 import RNPickerSelect from 'react-native-picker-select'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { collection, addDoc } from 'firebase/firestore';
+
 
 
 export default function CadastrarExtintor() {
     const [date, setDate] = useState(new Date());
     const [show, setShow] = useState(false)
+    const [numeroExtintor, setNumeroExtintor] = useState('');
+    const [tipo, setTipo] = useState('');
+    const [nf, setNF] = useState('');
+    const [peso, setPeso] = useState('');
+    const [codigoSeloInmetro, setCodigoSeloInmetro] = useState('');
+    const [cnpjFornecedora, setCnpjFornecedora] = useState('');
+    const [lacre, setLacre] = useState('');
+    const [classe, setClasse] = useState('');
+    const [testeHidrostatico, setTesteHidrostatico] = useState('');
+    const [observacoes, setObservacoes] = useState('');
+
+    const handleSubmit = async () => {
+        try {
+            const docRef = await addDoc(collection(db, "extintores"), {
+                numeroExtintor,
+                tipo,
+                nf,
+                peso,
+                codigoSeloInmetro,
+                cnpjFornecedora,
+                lacre,
+                classe,
+                testeHidrostatico,
+                observacoes,
+                dataCadastro: date
+            });
+            console.log("Documento escrito com ID: ", docRef.id);
+        } catch (e) {
+            console.error("Erro ao adicionar documento: ", e);
+        }
+    };
+
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -72,7 +106,6 @@ export default function CadastrarExtintor() {
                     }}
                 />
 
-                {/* inputs Row */}
                 <View style={styles.row}>
                     <TextInput
                         style={styles.num}
@@ -83,9 +116,15 @@ export default function CadastrarExtintor() {
                     <RNPickerSelect
                         onValueChange={(value) => console.log(value)}
                         items={[
-                            { label: 'ABC', value: 'ABC' },
-                            { label: 'BC', value: 'BC' },
-                            { label: 'AB', value: 'AB' },
+                            { label: 'Agua', value: 'ABC' },
+                            { label: 'Espuma', value: 'BC' },
+                            { label: 'Po Quimico S.', value: 'AB' },
+                            { label: 'CO2', value: 'CO2' },
+                            { label: 'Pó Químico E.', value: 'CO2' },
+                            { label: 'Halogenados', value: 'CO2' },
+                            { label: 'Halotron', value: 'Halotron' },
+                            { label: 'Gel de Água', value: 'Gel de Agua' },
+                            { label: 'Água Nebulizada', value: 'Água Nebulizada' },
                         ]}
                         placeholder={{
                             label: 'Tipo',
@@ -100,7 +139,7 @@ export default function CadastrarExtintor() {
                                 borderColor: 'gray',
                                 color: 'black',
                                 height: 40,
-                                width: 125,
+                                width: 175,
 
                             },
                             inputAndroid: {
@@ -190,15 +229,14 @@ export default function CadastrarExtintor() {
                 />
 
 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                     <View style={styles.cadastrar}>
-
                         <Text style={styles.textCadast}>
                             Cadastrar Extintor
                         </Text>
-
                     </View>
                 </TouchableOpacity>
+
             </View>
 
 
@@ -224,7 +262,7 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     num: {
-        width: 200,
+        width: 150,
         borderWidth: 1,
         height: 40,
         padding: 10,
@@ -232,7 +270,7 @@ const styles = StyleSheet.create({
     type: {
         borderWidth: 1,
         height: 40,
-        width: 125,
+        width: 175,
         padding: 10,
     },
     lacre: {
